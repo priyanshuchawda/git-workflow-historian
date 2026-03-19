@@ -7,6 +7,7 @@ from mcp_server.git_tools import (
     deep_blame,
     find_related_changes,
     get_project_evolution,
+    get_repo_story,
     locate_symbol,
 )
 
@@ -66,3 +67,18 @@ def test_locate_symbol_finds_current_code(sample_repo: Path) -> None:
     assert "Current code matches for: validate_token" in result
     assert "src/auth.py" in result
     assert "validate_token" in result
+
+
+def test_get_repo_story_surfaces_milestones_and_hotspots(sample_repo: Path) -> None:
+    result = get_repo_story(limit=4, repo_path=str(sample_repo), max_files=3)
+
+    assert "Repo story context (4 recent commits analyzed)" in result
+    assert "Milestones by day:" in result
+    assert "feat: add auth validation helpers" in result
+    assert "refactor: improve auth flow" in result
+    assert "Most repeatedly touched files:" in result
+    assert "- src/auth.py: 2 commits" in result
+    assert "Commit themes:" in result
+    assert "- feat: 2 commits" in result
+    assert "Current code anchors:" in result
+    assert "def validate_token(token: str) -> bool:" in result

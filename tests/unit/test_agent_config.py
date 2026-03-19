@@ -54,13 +54,34 @@ def test_prompt_includes_repo_path_when_present() -> None:
     assert "Repository path for this request: /tmp/repo" in prompt
     assert "Use this repo_path value when calling MCP tools." in prompt
     assert "Never invent file paths or line numbers." in prompt
+    assert "use get_repo_story to load repo-wide history context." in prompt
+    assert "Do not infer module purpose from file names alone." in prompt
+    assert "Separate explicit history evidence from inference." in prompt
+    assert "Avoid speculative wording such as 'likely', 'probably', 'presumably'" in prompt
+    assert (
+        "Do not suggest next implementation steps unless the user explicitly asks for them."
+        in prompt
+    )
+    assert "The current direction is not explicit in the repo history." in prompt
     assert "call locate_symbol first" in prompt
     assert "Only call deep_blame after you have a verified file path" in prompt
     assert "User question: What changed recently?" in prompt
 
 
+def test_story_mode_forces_repo_story_first() -> None:
+    prompt = _build_user_message(
+        "Explain the whole project story before coding.",
+        repo_path="/tmp/repo",
+        history_mode="story",
+    )
+
+    assert "This request requires full-project context." in prompt
+    assert "Call get_repo_story before any other history tool." in prompt
+
+
 def test_required_tool_names_are_exposed() -> None:
     assert DEFAULT_TOOL_NAMES == [
+        "get_repo_story",
         "get_project_evolution",
         "locate_symbol",
         "deep_blame",

@@ -12,11 +12,13 @@ async def test_ask_endpoint_returns_answer(monkeypatch) -> None:
         question: str,
         *,
         repo_path: str | None = None,
+        history_mode: str = "auto",
         user_id: str = "api-user",
         session_id: str | None = None,
     ) -> str:
         assert question == "What changed recently?"
         assert repo_path == "/tmp/repo"
+        assert history_mode == "story"
         assert user_id == "alice"
         assert session_id == "session-1"
         return "Recent work focused on auth cleanup."
@@ -30,6 +32,7 @@ async def test_ask_endpoint_returns_answer(monkeypatch) -> None:
             json={
                 "question": "What changed recently?",
                 "repo_path": "/tmp/repo",
+                "history_mode": "story",
                 "user_id": "alice",
                 "session_id": "session-1",
             },

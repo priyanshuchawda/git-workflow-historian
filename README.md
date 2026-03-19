@@ -10,6 +10,7 @@ It has three layers:
 
 ## Features
 - Recent-history summaries via `get_project_evolution`
+- Repo-wide milestone context via `get_repo_story`
 - Line-level intent lookup via `deep_blame`
 - Commit-message evolution search via `find_related_changes`
 - Current symbol discovery via `locate_symbol`
@@ -96,6 +97,17 @@ curl -X POST http://127.0.0.1:8080/ask \
   }'
 ```
 
+Example request that forces whole-repo story loading first:
+```bash
+curl -X POST http://127.0.0.1:8080/ask \
+  -H "Content-Type: application/json" \
+  -d '{
+    "question": "Give me the project story and current direction before I code.",
+    "repo_path": "/absolute/path/to/repo",
+    "history_mode": "story"
+  }'
+```
+
 ## Run tests
 ```bash
 uv run ruff check .
@@ -117,6 +129,13 @@ Run the MCP server directly over stdio:
 ```bash
 uv run gwh-mcp
 ```
+
+The MCP layer exposes:
+- `get_project_evolution`
+- `get_repo_story`
+- `locate_symbol`
+- `deep_blame`
+- `find_related_changes`
 
 Run it as streamable HTTP:
 ```bash
