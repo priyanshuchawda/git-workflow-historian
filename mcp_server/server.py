@@ -33,29 +33,29 @@ def get_project_evolution(limit: int = 5, repo_path: str | None = None) -> str:
 
 
 @app.tool()
-def deep_blame(
-    file_path: str,
-    line_number: int,
-    repo_path: str | None = None,
-) -> str:
-    """Find the commit responsible for a line and return the full owning diff."""
-    return deep_blame_impl(file_path=file_path, line_number=line_number, repo_path=repo_path)
-
-
-@app.tool()
-def find_related_changes(keyword: str, repo_path: str | None = None) -> str:
-    """Search commit messages for a keyword and summarize matching changes."""
-    return find_related_changes_impl(keyword=keyword, repo_path=repo_path)
-
-
-@app.tool()
 def locate_symbol(
     symbol: str,
     limit: int = 10,
     repo_path: str | None = None,
 ) -> str:
-    """Search the current repository tree for a symbol or keyword."""
+    """Find symbol locations first when the user names code but not a file path."""
     return locate_symbol_impl(symbol=symbol, limit=limit, repo_path=repo_path)
+
+
+@app.tool()
+def deep_blame(
+    file_path: str,
+    line_number: int,
+    repo_path: str | None = None,
+) -> str:
+    """Inspect history for a known file path and line number after locate_symbol."""
+    return deep_blame_impl(file_path=file_path, line_number=line_number, repo_path=repo_path)
+
+
+@app.tool()
+def find_related_changes(keyword: str, repo_path: str | None = None) -> str:
+    """Search commit-message history when the user asks about subsystem evolution."""
+    return find_related_changes_impl(keyword=keyword, repo_path=repo_path)
 
 
 def parse_args() -> argparse.Namespace:

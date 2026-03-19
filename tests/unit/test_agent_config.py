@@ -53,13 +53,16 @@ def test_prompt_includes_repo_path_when_present() -> None:
 
     assert "Repository path for this request: /tmp/repo" in prompt
     assert "Use this repo_path value when calling MCP tools." in prompt
+    assert "Never invent file paths or line numbers." in prompt
+    assert "call locate_symbol first" in prompt
+    assert "Only call deep_blame after you have a verified file path" in prompt
     assert "User question: What changed recently?" in prompt
 
 
 def test_required_tool_names_are_exposed() -> None:
     assert DEFAULT_TOOL_NAMES == [
         "get_project_evolution",
+        "locate_symbol",
         "deep_blame",
         "find_related_changes",
-        "locate_symbol",
     ]

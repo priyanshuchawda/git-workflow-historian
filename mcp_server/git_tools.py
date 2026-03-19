@@ -136,11 +136,13 @@ def find_related_changes(keyword: str, repo_path: str | None = None) -> str:
     repo_root = resolve_repo_root(repo_path)
     if not keyword.strip():
         raise GitToolError("keyword must not be empty")
+    normalized_keyword = keyword.casefold()
 
     result = _run_git(
         repo_root,
         [
             "log",
+            "--fixed-strings",
             "--regexp-ignore-case",
             f"--grep={keyword}",
             "--date=iso-strict",
@@ -154,11 +156,16 @@ def find_related_changes(keyword: str, repo_path: str | None = None) -> str:
     grouped: dict[str, list[CommitSummary]] = {}
     for line in result.stdout.splitlines():
         sha, date_raw, author, subject = line.split("\x1f")
+        if normalized_keyword not in subject.casefold():
+            continue
         stats = _commit_stats(repo_root, sha)
         day = datetime.fromisoformat(date_raw).date().isoformat()
         grouped.setdefault(day, []).append(
             CommitSummary(sha=sha, date=date_raw, author=author, subject=subject, stats=stats)
         )
+
+    if not grouped:
+        return f"Repository: {repo_root}\nNo commit messages matched keyword: {keyword}"
 
     sections = [f"Repository: {repo_root}", f"Commit history related to keyword: {keyword}"]
     for day in sorted(grouped.keys(), reverse=True):

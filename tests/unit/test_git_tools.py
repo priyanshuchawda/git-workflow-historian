@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import subprocess
 from pathlib import Path
 
 from mcp_server.git_tools import (
@@ -31,6 +32,30 @@ def test_find_related_changes_groups_matching_history(sample_repo: Path) -> None
     result = find_related_changes("auth", repo_path=str(sample_repo))
 
     assert "Commit history related to keyword: auth" in result
+    assert "feat: add auth validation helpers" in result
+    assert "refactor: improve auth flow" in result
+
+
+def test_find_related_changes_ignores_commit_trailers(sample_repo: Path) -> None:
+    notes = sample_repo / "NOTES.md"
+    notes.write_text("notes\n", encoding="utf-8")
+    subprocess.run(["git", "add", "NOTES.md"], cwd=sample_repo, check=True)
+    subprocess.run(
+        [
+            "git",
+            "commit",
+            "-m",
+            "chore: update notes",
+            "-m",
+            "Co-authored-by: helper <helper@example.com>",
+        ],
+        cwd=sample_repo,
+        check=True,
+    )
+
+    result = find_related_changes("auth", repo_path=str(sample_repo))
+
+    assert "chore: update notes" not in result
     assert "feat: add auth validation helpers" in result
     assert "refactor: improve auth flow" in result
 
