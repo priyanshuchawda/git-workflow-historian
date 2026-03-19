@@ -5,12 +5,15 @@ from __future__ import annotations
 import argparse
 import os
 
+from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
 
 from mcp_server.git_tools import deep_blame as deep_blame_impl
 from mcp_server.git_tools import find_related_changes as find_related_changes_impl
 from mcp_server.git_tools import get_project_evolution as get_project_evolution_impl
 from mcp_server.git_tools import locate_symbol as locate_symbol_impl
+
+load_dotenv()
 
 app = FastMCP(
     "Git Workflow Historian MCP",
