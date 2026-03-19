@@ -64,7 +64,7 @@ export GOOGLE_GENAI_USE_VERTEXAI="True"
 Optional runtime settings:
 ```bash
 export GIT_WORKFLOW_REPO_PATH="/absolute/path/to/the/repo/you-want-to-analyze"
-export GWH_MODEL="gemini-2.5-flash-lite"
+export GWH_MODEL="gemini-3.1-flash-lite-preview"
 export GWH_MCP_SERVER_URL=""  # leave unset to use local stdio MCP
 ```
 
@@ -101,6 +101,16 @@ curl -X POST http://127.0.0.1:8080/ask \
 uv run ruff check .
 uv run pytest
 ```
+
+## Run ADK eval
+Run the full ADK eval workflow:
+```bash
+uv run python tests/eval/run_adk_eval.py
+```
+
+This script prepares the deterministic Git fixture and then runs the three core
+eval cases sequentially via `adk eval`, which avoids MCP stdio session
+contention during multi-case eval runs.
 
 ## MCP server only
 Run the MCP server directly over stdio:

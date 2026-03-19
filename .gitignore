@@ -14,3 +14,7 @@ build/
 # Local reference snapshots used during development
 adk-llm.txt
 mcp-llm.txt
+app/.adk/
+tests/eval/__pycache__/
+tests/eval/generated/core_historians.evalset.json
+tests/eval/generated/sample_repo/
