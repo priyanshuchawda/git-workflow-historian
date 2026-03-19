@@ -64,7 +64,7 @@ export GOOGLE_GENAI_USE_VERTEXAI="True"
 Optional runtime settings:
 ```bash
 export GIT_WORKFLOW_REPO_PATH="/absolute/path/to/the/repo/you-want-to-analyze"
-export GWH_MODEL="gemini-3-flash-preview"
+export GWH_MODEL="gemini-2.5-flash-lite"
 export GWH_MCP_SERVER_URL=""  # leave unset to use local stdio MCP
 ```
 

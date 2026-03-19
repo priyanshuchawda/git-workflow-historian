@@ -12,11 +12,22 @@ from app.agent import APP_NAME, root_agent
 
 
 def _build_user_message(question: str, repo_path: str | None = None) -> str:
+    tool_guidance = (
+        "Tool usage rules for this request:\n"
+        "- Never invent file paths or line numbers.\n"
+        "- If the question mentions a function, method, class, or symbol without an exact file "
+        "path, call locate_symbol first.\n"
+        "- Only call deep_blame after you have a verified file path and line number from the "
+        "user or locate_symbol.\n"
+        "- Use get_project_evolution for recent-history questions.\n"
+        "- Use find_related_changes for subsystem or keyword evolution questions."
+    )
     if not repo_path:
-        return question
+        return f"{tool_guidance}\n\nUser question: {question}"
     return (
         f"Repository path for this request: {repo_path}\n"
         "Use this repo_path value when calling MCP tools.\n\n"
+        f"{tool_guidance}\n\n"
         f"User question: {question}"
     )
 

@@ -37,12 +37,12 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 load_dotenv(PROJECT_ROOT / ".env")
 
 APP_NAME = "app"
-DEFAULT_MODEL = os.getenv("GWH_MODEL", "gemini-3-flash-preview")
+DEFAULT_MODEL = os.getenv("GWH_MODEL", "gemini-2.5-flash-lite")
 DEFAULT_TOOL_NAMES = [
     "get_project_evolution",
+    "locate_symbol",
     "deep_blame",
     "find_related_changes",
-    "locate_symbol",
 ]
 
 
