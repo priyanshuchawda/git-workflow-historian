@@ -7,12 +7,10 @@ import os
 
 from mcp.server.fastmcp import FastMCP
 
-from mcp_server.git_tools import (
-    deep_blame,
-    find_related_changes,
-    get_project_evolution,
-    locate_symbol,
-)
+from mcp_server.git_tools import deep_blame as deep_blame_impl
+from mcp_server.git_tools import find_related_changes as find_related_changes_impl
+from mcp_server.git_tools import get_project_evolution as get_project_evolution_impl
+from mcp_server.git_tools import locate_symbol as locate_symbol_impl
 
 app = FastMCP(
     "Git Workflow Historian MCP",
@@ -26,35 +24,35 @@ app = FastMCP(
 
 
 @app.tool()
-def get_project_evolution_tool(limit: int = 5, repo_path: str | None = None) -> str:
+def get_project_evolution(limit: int = 5, repo_path: str | None = None) -> str:
     """Return the latest commits with file-level summaries for a repository."""
-    return get_project_evolution(limit=limit, repo_path=repo_path)
+    return get_project_evolution_impl(limit=limit, repo_path=repo_path)
 
 
 @app.tool()
-def deep_blame_tool(
+def deep_blame(
     file_path: str,
     line_number: int,
     repo_path: str | None = None,
 ) -> str:
     """Find the commit responsible for a line and return the full owning diff."""
-    return deep_blame(file_path=file_path, line_number=line_number, repo_path=repo_path)
+    return deep_blame_impl(file_path=file_path, line_number=line_number, repo_path=repo_path)
 
 
 @app.tool()
-def find_related_changes_tool(keyword: str, repo_path: str | None = None) -> str:
+def find_related_changes(keyword: str, repo_path: str | None = None) -> str:
     """Search commit messages for a keyword and summarize matching changes."""
-    return find_related_changes(keyword=keyword, repo_path=repo_path)
+    return find_related_changes_impl(keyword=keyword, repo_path=repo_path)
 
 
 @app.tool()
-def locate_symbol_tool(
+def locate_symbol(
     symbol: str,
     limit: int = 10,
     repo_path: str | None = None,
 ) -> str:
     """Search the current repository tree for a symbol or keyword."""
-    return locate_symbol(symbol=symbol, limit=limit, repo_path=repo_path)
+    return locate_symbol_impl(symbol=symbol, limit=limit, repo_path=repo_path)
 
 
 def parse_args() -> argparse.Namespace:
