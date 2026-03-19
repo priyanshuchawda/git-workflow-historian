@@ -83,13 +83,20 @@ def parse_args() -> argparse.Namespace:
         default=int(os.getenv("PORT", "8080")),
         help="Port used for streamable HTTP transport.",
     )
+    parser.add_argument(
+        "--host",
+        default=os.getenv("GWH_MCP_HOST", "0.0.0.0"),
+        help="Host used for streamable HTTP transport.",
+    )
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
     if args.transport == "streamable-http":
-        app.run(transport="streamable-http", port=args.port)
+        app.settings.host = args.host
+        app.settings.port = args.port
+        app.run(transport="streamable-http")
         return
     app.run()
 
