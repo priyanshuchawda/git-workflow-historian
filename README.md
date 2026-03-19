@@ -144,7 +144,12 @@ Standard MCP client config:
 }
 ```
 
-If you want one target repository by default, add:
+If your MCP client supports workspace/project roots, this server can infer the
+active repository automatically when tool calls omit `repo_path`. This is the
+best option for a globally installed MCP server because the current workspace
+can determine which repo is in scope.
+
+If you want one fixed target repository by default, add:
 ```json
 {
   "mcpServers": {
@@ -159,6 +164,15 @@ If you want one target repository by default, add:
   }
 }
 ```
+
+Repository selection order for MCP tool calls is:
+1. Explicit `repo_path` argument
+2. Exactly one Git repository found in MCP roots exposed by the client
+3. `GIT_WORKFLOW_REPO_PATH`
+4. Current working directory
+
+If multiple Git repositories are exposed as MCP roots, the server refuses to
+guess and asks the client or agent to pass `repo_path` explicitly.
 
 The MCP layer exposes:
 - `get_project_evolution`
