@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import os
+from typing import Literal
 
 import uvicorn
 from dotenv import load_dotenv
@@ -22,6 +23,10 @@ class AskRequest(BaseModel):
     repo_path: str | None = Field(
         default=None,
         description="Optional absolute path to the repository for this request.",
+    )
+    history_mode: Literal["auto", "story", "focused"] = Field(
+        default="auto",
+        description="How much repo-wide history context the agent should load.",
     )
     user_id: str = Field(default="api-user", description="Logical caller identifier.")
     session_id: str | None = Field(default=None, description="Optional session identifier.")
@@ -42,6 +47,7 @@ async def ask_endpoint(request: AskRequest) -> AskResponse:
             ask_question(
                 request.question,
                 repo_path=request.repo_path,
+                history_mode=request.history_mode,
                 user_id=request.user_id,
                 session_id=request.session_id,
             ),

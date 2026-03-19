@@ -11,6 +11,7 @@ from mcp.server.fastmcp import FastMCP
 from mcp_server.git_tools import deep_blame as deep_blame_impl
 from mcp_server.git_tools import find_related_changes as find_related_changes_impl
 from mcp_server.git_tools import get_project_evolution as get_project_evolution_impl
+from mcp_server.git_tools import get_repo_story as get_repo_story_impl
 from mcp_server.git_tools import locate_symbol as locate_symbol_impl
 
 load_dotenv()
@@ -30,6 +31,16 @@ app = FastMCP(
 def get_project_evolution(limit: int = 5, repo_path: str | None = None) -> str:
     """Return the latest commits with file-level summaries for a repository."""
     return get_project_evolution_impl(limit=limit, repo_path=repo_path)
+
+
+@app.tool()
+def get_repo_story(
+    limit: int = 30,
+    repo_path: str | None = None,
+    max_files: int = 8,
+) -> str:
+    """Load repo-wide history context before broader coding or architecture questions."""
+    return get_repo_story_impl(limit=limit, repo_path=repo_path, max_files=max_files)
 
 
 @app.tool()

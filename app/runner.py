@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from typing import Literal
 from uuid import uuid4
 
 from google.adk.runners import Runner
@@ -10,11 +11,31 @@ from google.genai import types
 
 from app.agent import APP_NAME, root_agent
 
+HistoryMode = Literal["auto", "story", "focused"]
 
-def _build_user_message(question: str, repo_path: str | None = None) -> str:
+
+def _build_user_message(
+    question: str,
+    repo_path: str | None = None,
+    *,
+    history_mode: HistoryMode = "auto",
+) -> str:
     tool_guidance = (
         "Tool usage rules for this request:\n"
         "- Never invent file paths or line numbers.\n"
+        "- For broad implementation, architecture, refactor, or 'whole story' requests, use "
+        "get_repo_story to load repo-wide history context.\n"
+        "- Do not infer module purpose from file names alone. If you need to explain what code "
+        "does, ground that explanation in commit history or current code evidence.\n"
+        "- Separate explicit history evidence from inference. If the current direction is not "
+        "clear from the repo history, say that directly instead of guessing a roadmap.\n"
+        "- Avoid speculative wording such as 'likely', 'probably', 'presumably', or "
+        "'suggests'. If an inference is unavoidable, label it explicitly as inference and keep "
+        "it minimal.\n"
+        "- Do not suggest next implementation steps unless the user explicitly asks for them.\n"
+        "- If the user asks for the current direction, describe only the latest observed work. "
+        "If the direction is not explicit in history, say 'The current direction is not "
+        "explicit in the repo history.'\n"
         "- If the question mentions a function, method, class, or symbol without an exact file "
         "path, call locate_symbol first.\n"
         "- Only call deep_blame after you have a verified file path and line number from the "
@@ -22,6 +43,13 @@ def _build_user_message(question: str, repo_path: str | None = None) -> str:
         "- Use get_project_evolution for recent-history questions.\n"
         "- Use find_related_changes for subsystem or keyword evolution questions."
     )
+    if history_mode == "story":
+        tool_guidance += (
+            "\n- This request requires full-project context. Call get_repo_story before any "
+            "other history tool."
+        )
+    elif history_mode == "focused":
+        tool_guidance += "\n- Keep tool use narrowly scoped to the specific question."
     if not repo_path:
         return f"{tool_guidance}\n\nUser question: {question}"
     return (
@@ -47,6 +75,7 @@ async def ask_question(
     question: str,
     *,
     repo_path: str | None = None,
+    history_mode: HistoryMode = "auto",
     user_id: str = "local-user",
     session_id: str | None = None,
 ) -> str:
@@ -68,7 +97,11 @@ async def ask_question(
         session_service=session_service,
     )
 
-    prompt = _build_user_message(question=question, repo_path=repo_path)
+    prompt = _build_user_message(
+        question=question,
+        repo_path=repo_path,
+        history_mode=history_mode,
+    )
     content = types.Content(role="user", parts=[types.Part.from_text(text=prompt)])
 
     final_response = ""

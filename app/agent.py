@@ -39,6 +39,7 @@ load_dotenv(PROJECT_ROOT / ".env")
 APP_NAME = "app"
 DEFAULT_MODEL = os.getenv("GWH_MODEL", "gemini-3.1-flash-lite-preview")
 DEFAULT_TOOL_NAMES = [
+    "get_repo_story",
     "get_project_evolution",
     "locate_symbol",
     "deep_blame",
