@@ -16,6 +16,7 @@ It has three layers:
 - Current symbol discovery via `locate_symbol`
 - ADK historian agent with the exact prompt requested
 - FastAPI `POST /ask` endpoint for local use and Cloud Run deployment
+- Standalone MCP server for any MCP-compatible client
 
 ## Project structure
 ```text
@@ -130,6 +131,35 @@ Run the MCP server directly over stdio:
 uv run gwh-mcp
 ```
 
+Standard MCP client config:
+```json
+{
+  "mcpServers": {
+    "git-workflow-historian": {
+      "command": "uv",
+      "args": ["run", "gwh-mcp"],
+      "cwd": "/absolute/path/to/git-workflow-historian"
+    }
+  }
+}
+```
+
+If you want one target repository by default, add:
+```json
+{
+  "mcpServers": {
+    "git-workflow-historian": {
+      "command": "uv",
+      "args": ["run", "gwh-mcp"],
+      "cwd": "/absolute/path/to/git-workflow-historian",
+      "env": {
+        "GIT_WORKFLOW_REPO_PATH": "/absolute/path/to/repo-to-analyze"
+      }
+    }
+  }
+}
+```
+
 The MCP layer exposes:
 - `get_project_evolution`
 - `get_repo_story`
@@ -139,8 +169,16 @@ The MCP layer exposes:
 
 Run it as streamable HTTP:
 ```bash
-uv run gwh-mcp --transport streamable-http --port 8081
+uv run gwh-mcp --transport streamable-http --host 0.0.0.0 --port 8081
 ```
+
+The remote MCP endpoint is:
+```text
+http://127.0.0.1:8081/mcp
+```
+
+Use this shape when another MCP client wants to connect over HTTP instead of
+stdio.
 
 ## Cloud Run deployment
 Build locally:
