@@ -42,6 +42,11 @@ It has three layers:
 uv sync --extra dev
 ```
 
+Create your local env file:
+```bash
+cp .env.example .env
+```
+
 ### Environment
 For Gemini API key based usage:
 ```bash
@@ -62,6 +67,8 @@ export GIT_WORKFLOW_REPO_PATH="/absolute/path/to/the/repo/you-want-to-analyze"
 export GWH_MODEL="gemini-3-flash-preview"
 export GWH_MCP_SERVER_URL=""  # leave unset to use local stdio MCP
 ```
+
+You can put the same values in `.env`; the service and MCP server load it automatically.
 
 ## Run locally
 Start the FastAPI service:

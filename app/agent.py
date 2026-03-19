@@ -6,6 +6,7 @@ import os
 import sys
 from pathlib import Path
 
+from dotenv import load_dotenv
 from google.adk.agents import LlmAgent
 from google.adk.tools.mcp_tool import McpToolset
 from google.adk.tools.mcp_tool.mcp_session_manager import (
@@ -33,6 +34,8 @@ When a user asks a question:
 Do not dump raw git logs. Always synthesize insights."""
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
+load_dotenv(PROJECT_ROOT / ".env")
+
 APP_NAME = "app"
 DEFAULT_MODEL = os.getenv("GWH_MODEL", "gemini-3-flash-preview")
 DEFAULT_TOOL_NAMES = [

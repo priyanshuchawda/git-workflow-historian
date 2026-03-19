@@ -6,10 +6,13 @@ import asyncio
 import os
 
 import uvicorn
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
 from app.runner import ask_question
+
+load_dotenv()
 
 REQUEST_TIMEOUT_SECONDS = float(os.getenv("GWH_REQUEST_TIMEOUT_SECONDS", "120"))
 
